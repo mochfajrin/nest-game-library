@@ -24,7 +24,7 @@ model User {
 }
 
 model Game {
-  id String @id @db.VarChar(33) @unique
+  id String @id @db.VarChar(36) @unique
   user_id String
   title String @db.VarChar(128)
   image String? @db.VarChar(50)

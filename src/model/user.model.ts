@@ -4,8 +4,24 @@ export class RegisterUserRequest {
   name: string;
 }
 
+export class UserPayload {
+  id: string;
+  username: string;
+  name: string;
+}
+
 export class UserResponse {
   username: string;
   name: string;
-  token?: string;
+  access_token?: string;
+}
+
+export class LoginUserRequest {
+  username: string;
+  password: string;
+}
+
+export class UpdateUserRequest {
+  name?: string;
+  password?: string;
 }
