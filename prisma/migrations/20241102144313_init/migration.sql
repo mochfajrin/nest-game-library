@@ -14,7 +14,7 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "games" (
-    "id" VARCHAR(33) NOT NULL,
+    "id" VARCHAR(36) NOT NULL,
     "user_id" TEXT NOT NULL,
     "title" VARCHAR(128) NOT NULL,
     "image" VARCHAR(50),

@@ -1,3 +1,5 @@
+import { UserRole } from '@prisma/client';
+
 export class RegisterUserRequest {
   username: string;
   password: string;
@@ -8,6 +10,7 @@ export class UserPayload {
   id: string;
   username: string;
   name: string;
+  role: UserRole;
 }
 
 export class UserResponse {

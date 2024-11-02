@@ -18,7 +18,6 @@ import {
 import { WebResponse } from 'src/model/web.response';
 import { UserValidation } from './user.validation';
 import { UserService } from './user.service';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { Auth } from 'src/auth/auth.decorator';
 import { User } from '@prisma/client';
 
@@ -50,7 +49,6 @@ export class UserController {
     };
   }
   @Get('/current')
-  @UseGuards(AuthGuard)
   async getCurrent(
     @Auth() user: UserPayload,
   ): Promise<WebResponse<UserResponse>> {
@@ -59,7 +57,6 @@ export class UserController {
     };
   }
   @Patch('/current')
-  @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ValidationPipe(UserValidation.UPDATE))
   async update(

@@ -2,22 +2,22 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { PrismaService } from 'src/common/prisma.service';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthMiddleware implements NestMiddleware {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prismaService: PrismaService,
   ) {}
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    console.log(token);
+  async use(req: Request, res: Response, next: NextFunction) {
+    const token = this.extractTokenFromHeader(req);
+
     if (!token) {
       throw new UnauthorizedException({ message: ['Unauhorization'] });
     }
@@ -36,11 +36,11 @@ export class AuthGuard implements CanActivate {
       if (!user) {
         throw new UnauthorizedException({ message: 'User not found' });
       }
-      request['user'] = user;
+      req['user'] = user;
     } catch {
       throw new UnauthorizedException({ message: ['Unathorization'] });
     }
-    return true;
+    next();
   }
   private extractTokenFromHeader(req: Request): string | undefined {
     const [type, token] = req.headers.authorization?.split(' ') ?? [];

@@ -6,6 +6,7 @@ import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { TestModule } from './test.module';
 import { TestService } from './test.service';
+import { GameModule } from 'src/game/game.module';
 
 describe('UserController', () => {
   let app: INestApplication;
@@ -227,6 +228,76 @@ describe('UserController', () => {
       logger.info(response.body);
       expect(response.status).toBe(200);
       expect(user.status).toBe(200);
+    });
+  });
+
+  describe('PATCH /api/v1/users/current', () => {
+    beforeEach(async () => {
+      await testService.deleteAllGame();
+      await testService.deleteUser();
+      await testService.createUser();
+      await testService.createUserWithRoleAdmin();
+    });
+    it('should be rejected if request is invalid', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/users/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+
+      const response = await request(app.getHttpServer())
+        .patch('/api/v1/users/current')
+        .set('Authorization', `Bearer ${user.body.data.access_token}`)
+        .send({
+          name: '',
+          password: '',
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBeDefined();
+    });
+    it('should be able update username', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/users/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+
+      const response = await request(app.getHttpServer())
+        .patch('/api/v1/users/current')
+        .set('Authorization', `Bearer ${user.body.data.access_token}`)
+        .send({
+          name: 'test123',
+        });
+      logger.info(response.body);
+      expect(response.status).toBe(200);
+      expect(response.body.data.name).toBe('test123');
+    });
+    it('should be able create game', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/users/login')
+        .send({
+          username: 'admin',
+          password: 'admin',
+        });
+
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/games')
+        .set('Authorization', `Bearer ${user.body.data.access_token}`)
+        .send({
+          title: 'test',
+          image: 'test.png',
+          summary: 'test',
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(201);
+      expect(response.body.data.title).toBe('test');
+      expect(response.body.data.image).toBe('test.png');
+      expect(response.body.data.summary).toBe('test');
     });
   });
 });

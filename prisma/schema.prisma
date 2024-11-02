@@ -28,6 +28,7 @@ model Game {
   user_id String
   title String @db.VarChar(128)
   image String? @db.VarChar(50)
+  image_id String? @db.VarChar(50)
   summary String? @db.VarChar(4000)
   user User @relation(fields: [user_id], references: [id])
   userlibrary UserLibrary[]

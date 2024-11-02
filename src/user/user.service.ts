@@ -9,6 +9,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 import {
   LoginUserRequest,
   RegisterUserRequest,
@@ -16,8 +18,6 @@ import {
   UserResponse,
 } from 'src/model/user.model';
 import { PrismaService } from 'src/common/prisma.service';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -85,7 +85,12 @@ export class UserService {
     };
   }
   async generateAccessToken(user: User) {
-    const payload = { id: user.id, username: user.username, name: user.name };
+    const payload = {
+      id: user.id,
+      username: user.username,
+      name: user.name,
+      role: user.role,
+    };
     return await this.jwtService.signAsync(payload);
   }
   async update(user: User, request: UpdateUserRequest): Promise<UserResponse> {

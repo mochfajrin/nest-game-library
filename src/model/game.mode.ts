@@ -1,7 +1,6 @@
 import { Game } from '@prisma/client';
 
 export class CreateGameRequest {
-  user_id: string;
   title: string;
   image?: string;
   summary?: string;
@@ -10,6 +9,7 @@ export class CreateGameRequest {
 export class UpdateGameRequest {
   title?: string;
   image?: string;
+  image_id?: string;
   summary?: string;
 }
 
